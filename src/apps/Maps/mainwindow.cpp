@@ -36,11 +36,11 @@ MainWindow::MainWindow(QWidget *parent) :
     if (m_app_path.length() == 0 || m_app_path[m_app_path.length() - 1] != '/')
         m_app_path += '/';
 
-    // Strip the path down to a string ending with /CartoType/; if no such pattern is found, use the app path
+    // Strip the path down to a string ending just before /src/apps/; if no such pattern is found, use the app path
     m_cartotype_source_path = m_app_path;
-    int n = m_cartotype_source_path.lastIndexOf("/CartoType/");
+    int n = m_cartotype_source_path.lastIndexOf("/src/apps/");
     if (n != -1)
-        m_cartotype_source_path.truncate(n + strlen("/CartoType/"));
+        m_cartotype_source_path.truncate(n + 1);
     if (m_cartotype_source_path.length() == 0 || m_cartotype_source_path[m_cartotype_source_path.length() - 1] != '/')
         m_cartotype_source_path += '/';
     InitCartoType();
