@@ -112,6 +112,11 @@ class TExpressionValue
         return iString.Length() > 0 || (iNumber != 0 && iNumber == iNumber);
         }
 
+    bool IsNan() const
+        {
+        return iNumber != iNumber;
+        }
+
     const MString* StringValue() const { return iString.Text() ? &iString : nullptr; }
     static TResult GetValueOfStringLiteral(double& aValue,const MString& aText);
 
@@ -167,6 +172,8 @@ enum class TExpressionOpType
     EqualIgnoreAccents,
     EqualFuzzy,
     EqualWild,
+
+    Concat
     };
 
 /**

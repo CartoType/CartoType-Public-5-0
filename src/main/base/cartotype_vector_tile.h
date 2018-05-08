@@ -139,7 +139,7 @@ template<typename T> class TTaskQueue
     std::condition_variable m_condition;
     };
 
-enum class TVectorDataType
+enum class TVectorDataType: int
     {
     Static,
     Dynamic
@@ -147,36 +147,26 @@ enum class TVectorDataType
 
 class TTileSpec
     {
+    auto Tuple() const { return std::forward_as_tuple(m_zoom,m_x,m_y,m_type,m_generation); }
+    auto TupleWithoutGeneration() const { return std::forward_as_tuple(m_zoom,m_x,m_y,m_type); }
+
     public:
     bool operator==(const TTileSpec& aOther) const
         {
-        return m_zoom == aOther.m_zoom &&
-               m_x == aOther.m_x &&
-               m_y == aOther.m_y &&
-               m_type == aOther.m_type;
+        return Tuple() == aOther.Tuple();
         }
     bool operator<(const TTileSpec& aOther) const
         {
-        if (m_zoom < aOther.m_zoom)
-            return true;
-        if (m_zoom == aOther.m_zoom)
-            {
-            if (m_x < aOther.m_x)
-                return true;
-            if (m_x == aOther.m_x)
-                {
-                if (m_y < aOther.m_y)
-                    return true;
-                if (m_y == aOther.m_y)
-                    return int(m_type) < int(aOther.m_type);
-                }
-            }
-        return false;
+        return Tuple() < aOther.Tuple();
+        }
+    bool operator%(const TTileSpec& aOther) const
+        {
+        return TupleWithoutGeneration() == aOther.TupleWithoutGeneration();
         }
 
     bool Supersedes(const TTileSpec& aOther) const
         {
-        return m_zoom != aOther.m_zoom; // tile requests supersede requests for other zoom levels
+        return m_zoom != aOther.m_zoom || m_generation > aOther.m_generation; // tile requests supersede requests for other zoom levels or previous generations
         }
 
     bool Contains(const TTileSpec& aOther) const
@@ -193,8 +183,8 @@ class TTileSpec
     int32 m_zoom = 0;
     int32 m_x = 0;
     int32 m_y = 0;
-
     TVectorDataType m_type = TVectorDataType::Static;
+    uint32 m_generation = 0;
     };
 
 class TLabelSetSpec: public TViewState
@@ -475,12 +465,6 @@ class CVectorTileHelper
     virtual void DrawFrame(const std::vector<CTileDrawData*>& /*aTileDrawDataArray*/,const CLabelDrawData* /*aLabelDrawData*/,bool /*aDraw3DBuildings*/) { }
 
     /**
-    This function is called by the drawing thread when one of the cached tiles is just about to
-    be unloaded to reduce the cache to its maximum size.
-    */
-    virtual void OnTileUnloaded(const CVectorTile& /*aVectorTile*/) { }
-
-    /**
     This data member tells the CVectorTileServer what type of information to put in the CVectorTileMapStore objects.
     If it is true, CVectorTileMapStore objects contain object groups suitable for use by graphics-accelerated drawing.
     If not, the object groups are not created; they are not necessary when using software drawing.
@@ -564,8 +548,8 @@ class CVectorTileServer: public MFrameworkObserver
     bool m_y_axis_up;
     std::atomic<uint32> m_style_sheet_generation;
     std::atomic<uint32> m_enabled_layer_generation;
-    bool m_main_data_changed = false;
-    bool m_dynamic_data_changed = false;
+    std::atomic<uint32> m_static_data_generation;
+    std::atomic<uint32> m_dynamic_data_generation;
     TMapState m_map_state;
     TThreadSafeMapState m_thread_safe_map_state;
     TThreadSafeStyleSheetData m_thread_safe_style_sheet_data;

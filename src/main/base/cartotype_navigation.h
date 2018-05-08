@@ -711,6 +711,7 @@ class TNavigatorTurn: public TTurn
         iPosition.iX = iPosition.iY = 0;
         }
 
+    bool CanMerge(const TNavigatorTurn& aFollowingTurn) const;
     bool MergeIfPossible(const TNavigatorTurn& aFollowingTurn);
     void Merge(const TNavigatorTurn& aFollowingTurn);
     void CreateInstructions(const char* aLocale);

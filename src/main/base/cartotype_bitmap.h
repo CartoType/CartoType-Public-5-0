@@ -128,6 +128,27 @@ class TBitmap
     /** Clear the pixel data to ones (normally white). */
     void ClearToWhite() { memset(iData,0xFF,iHeight * iRowBytes); }
 
+    bool operator<(const TBitmap& aOther) const
+        {
+        if (iWidth < aOther.iWidth)
+            return true;
+        if (iWidth == aOther.iWidth)
+            {
+            if (iHeight < aOther.iHeight)
+                return true;
+            if (iHeight == aOther.iHeight)
+                {
+                if (memcmp(iData,aOther.iData,DataBytes()) < 0)
+                    return true;
+                }
+            }
+        return false;
+        }
+    bool operator==(const TBitmap& aOther) const
+        {
+        return iWidth == aOther.iWidth && iHeight == aOther.iHeight && memcmp(iData,aOther.iData,DataBytes()) == 0;
+        }
+
     protected:
     static TColor Color1BitMono(const TBitmap& aBitmap,uint32 aX,uint32 aY);
     static TColor Color8BitMono(const TBitmap& aBitmap,uint32 aX,uint32 aY);
