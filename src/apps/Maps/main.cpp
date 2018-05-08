@@ -3,6 +3,7 @@
 
 int main(int argc,char* argv[])
     {
+    QApplication::setAttribute(Qt::AA_UseOpenGLES);
     QApplication a(argc,argv);
     QCoreApplication::setOrganizationName("CartoType");
     QCoreApplication::setOrganizationDomain("cartotype.com");
