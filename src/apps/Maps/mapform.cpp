@@ -118,6 +118,8 @@ MapForm::MapForm(QWidget* aParent,MainWindow& aMainWindow,const QString& aMapFil
     // Create the initial map image.
     m_map_image.reset(new QImage(rect.width(),rect.height(),QImage::Format_ARGB32_Premultiplied));
 
+    m_ui->perspective_slider->hide();
+
     SetGraphicsAcceleration(true);
     }
 
@@ -1546,11 +1548,32 @@ void MapForm::SetGraphicsAcceleration(bool aEnable)
         }
     }
 
+void MapForm::on_perspective_slider_valueChanged(int aValue)
+    {
+    CartoType::TPerspectiveParam p;
+    p.iDeclinationDegrees = m_perspective_angle = aValue;
+    p.iFieldOfViewDegrees = 38;
+    m_framework->SetPerspective(p);
+    update();
+    }
+
 void MapForm::SetPerspective(bool aEnable)
     {
     if (aEnable != m_framework->Perspective())
         {
-        m_framework->SetPerspective(aEnable);
+        if (aEnable)
+            {
+            CartoType::TPerspectiveParam p;
+            p.iDeclinationDegrees = m_perspective_angle;
+            p.iFieldOfViewDegrees = 38;
+            m_framework->SetPerspective(p);
+            m_ui->perspective_slider->show();
+            }
+        else
+            {
+            m_framework->SetPerspective(false);
+            m_ui->perspective_slider->hide();
+            }
         update();
         }
     }

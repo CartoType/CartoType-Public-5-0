@@ -131,10 +131,11 @@ CCartoTypeDemoView::CCartoTypeDemoView()
 
 CCartoTypeDemoView::~CCartoTypeDemoView()
     {
-    iRouteIter.reset(nullptr);
-    iFramework.reset(nullptr);
-    iImageServerHelper.reset(nullptr);
-    iExtraGc.reset(nullptr);
+    iMapRenderer = nullptr;
+    iRouteIter = nullptr;
+    iFramework = nullptr;
+    iImageServerHelper = nullptr;
+    iExtraGc = nullptr;
     }
 
 BOOL CCartoTypeDemoView::PreCreateWindow(CREATESTRUCT& cs)
@@ -386,6 +387,9 @@ static void DrawBitmapWithAlpha(HDC aDeviceContext,const CartoType::TBitmap* aBi
 
 void CCartoTypeDemoView::OnDraw(CDC* pDC)
     {
+    if (iMapRenderer)
+        return;
+
 #ifdef SHOW_DRAW_TIME
     clock_t start_time = clock();
 #endif
@@ -1120,6 +1124,9 @@ void CCartoTypeDemoView::OnInitialUpdate()
         iImageServerHelper.reset(new CMyImageServerHelper);
         iFramework->UseImageServer(iImageServerHelper.get());
         }
+
+    // UNCOMMENT THE NEXT LINE TO ENABLE GRAPHICS ACCELERATION
+    // iMapRenderer.reset(new CartoType::CMapRenderer(*iFramework,m_hWnd));
  
     // Do not set the pixel size here; use the default value of 144dpi.
     // Add a call to iFramework->SetResolutionDpi to set the pixel size.
@@ -1197,7 +1204,7 @@ void CCartoTypeDemoView::OnMouseMove(UINT /*nFlags*/,CPoint point)
         iMapDragOffset.iX = point.x - iMapDragAnchor.iX;
         iMapDragOffset.iY = point.y - iMapDragAnchor.iY;
 
-        if (iUsingImageServer)
+        if (iMapRenderer || iUsingImageServer)
             {
             iFramework->Pan(-iMapDragOffset.iX,-iMapDragOffset.iY);
             iMapDragOffset = CartoType::TPoint(0,0);

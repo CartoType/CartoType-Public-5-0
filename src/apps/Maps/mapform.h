@@ -91,6 +91,7 @@ class MapForm: public QOpenGLWidget, public CartoType::MNavigatorObserver
 
     private slots:
     void on_dial_valueChanged(int aValue);
+    void on_perspective_slider_valueChanged(int aValue);
     void ApplyStyleSheet(std::string aStyleSheet);
 
     private:
@@ -181,6 +182,7 @@ class MapForm: public QOpenGLWidget, public CartoType::MNavigatorObserver
     bool m_style_sheet_applied = false;
     bool m_graphics_acceleration = false;           // true if rendering is to be done using OpenGL ES
     QTimer m_graphics_acceleration_update_timer;
+    int m_perspective_angle = 30;
     };
 
 #endif // MAPFORM_H
