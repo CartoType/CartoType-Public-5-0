@@ -19,6 +19,7 @@ See www.cartotype.com for more information.
 #include <cartotype_image_server_helper.h>
 #include <cartotype_legend.h>
 #include <cartotype_style_sheet_data.h>
+#include <cartotype_expression.h>
 
 #include <memory>
 #include <set>
@@ -442,7 +443,7 @@ class CFramework: public MNavigatorObserver
     TResult SetStyleSheet(const CString& aStyleSheetFileName,size_t aIndex = 0);
     TResult SetStyleSheet(const uint8* aData,size_t aLength,size_t aIndex = 0);
     TResult SetStyleSheet(const CStyleSheetData& aStyleSheetData,size_t aIndex = 0);
-    TResult SetStyleSheet(const CStyleSheetDataArray& aStyleSheetDataArray);
+    TResult SetStyleSheet(const CStyleSheetDataArray& aStyleSheetDataArray,const CVariableDictionary* aStyleSheetVariables = nullptr);
     TResult ReloadStyleSheet(size_t aIndex = 0);
     void AppendStyleSheet(const CString& aStyleSheetFileName);
     void AppendStyleSheet(const uint8* aData,size_t aLength);
@@ -450,6 +451,7 @@ class CFramework: public MNavigatorObserver
     std::string GetStyleSheetText(size_t aIndex) const;
     CStyleSheetData GetStyleSheetData(size_t aIndex) const;
     const CStyleSheetDataArray& GetStyleSheetDataArray() const;
+    const CVariableDictionary& GetStyleSheetVariables() const;
 
     void Resize(int32 aViewWidth,int32 aViewHeight);
     void SetResolutionDpi(double aDpi);

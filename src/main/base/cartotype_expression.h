@@ -285,7 +285,7 @@ class CVariableDictionary: public MVariableDictionary
         else
             iDictionary.erase(aVariableName);
         }
-    template<typename Functor> void Apply(Functor aFunctor) { for (auto& p : iDictionary) { aFunctor(p.first,p.second); } }
+    template<typename Functor> void Apply(Functor& aFunctor) { for (auto& p : iDictionary) { aFunctor(p.first,p.second); } }
 
     private:
     CStringDictionary iDictionary;

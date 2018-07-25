@@ -394,15 +394,21 @@ class TThreadSafeMapState: private TMapState
     std::mutex m_mutex;
     };
 
-class TThreadSafeStyleSheetData
+class TStyleSheetData
+    {
+    public:
+    CStyleSheetDataArray m_style_sheet_data_array;
+    CVariableDictionary m_style_sheet_variables;
+    };
+
+class TThreadSafeStyleSheetData: private TStyleSheetData
     {
     public:
     void Set(CFramework& aFramework);
-    CStyleSheetDataArray Get();
+    void Get(TStyleSheetData& aStyleSheetData);
 
     private:
     std::mutex m_mutex;
-    CStyleSheetDataArray m_style_sheet_data_array;
     };
 
 class TThreadSafeDrawParam
@@ -509,7 +515,7 @@ class CVectorTileServer: public MFrameworkObserver
     std::shared_ptr<CLabelSet> GetLabelSet(const TLabelSetSpec& aBitmapSpec);
     bool ForGraphicsAcceleration() const { return m_helper->m_for_graphics_acceleration; }
     uint32 StyleSheetGeneration() const { return m_style_sheet_generation; }
-    CStyleSheetDataArray StyleSheetDataArray() { return m_thread_safe_style_sheet_data.Get(); }
+    void GetStyleSheetData(TStyleSheetData& aData) { m_thread_safe_style_sheet_data.Get(aData); }
     uint32 EnabledLayerGeneration() const { return m_enabled_layer_generation; }
     std::set<CString> DisabledLayers() { return m_thread_safe_draw_param.DisabledLayers(); }
 
